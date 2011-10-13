@@ -10,6 +10,7 @@ import time
 from os.path import *
 import os
 import errno
+import csv
 from xml.etree import ElementTree as ETree
 
 #from aquilon.config import Config
@@ -22,6 +23,25 @@ from aquilonappliance.lib.base import BaseController, render
 log = logging.getLogger(__name__)
 
 realm_re = re.compile('(\s*default_realm\s*=\s*)([a-zA-Z.]*)')
+
+# So many hacks, so little time.
+
+# This should really be in input.xml, but we'll just
+# provide "overlay" information until that time.
+lookup = {
+    'archetype': {'cmd':'show_archetype','fmt':'csv'},
+    'model': {'cmd':'show_model','fmt':'csv'},
+    'hub': {'cmd':'show_hub','fmt':'csv', 'label':7,'value':1},
+    'organization': {'cmd':'show_organization','fmt':'csv','label':7,'value':1},
+    'continent': {'cmd':'show_continent','fmt':'csv', 'label':7,'value':1},
+    'city': {'cmd':'show_city','fmt':'csv', 'label':7,'value':1},
+    'building': {'cmd':'show_building','fmt':'csv', 'label':7,'value':1},
+    'country': {'cmd':'show_country','fmt':'csv', 'label':7,'value':1},
+    'rack': {'cmd':'show_rack','fmt':'csv', 'label':7,'value':1},
+    'dns_domain': {'cmd':'show_dns_domain','fmt':'csv'},
+    'principal': {'cmd':'show_principal','fmt':'csv'},
+    'machine': {'cmd':'show_machine','fmt':''},
+}
 
 def space_used(dir, units):
     total = 0
@@ -66,7 +86,7 @@ def aq(cmd):
 
 class ApplianceController(BaseController):
 
-    def emitfields(self, group):
+    def emitfields(self, cmd, group):
         mandatory = False
         if "mandatory" in group.attrib and group.attrib["mandatory"] == "True":
             mandatory = True
@@ -103,19 +123,47 @@ class ApplianceController(BaseController):
 
         for opt in group.getchildren():
             if (opt.tag == "optgroup"):
-                self.emitfields(opt)
+                self.emitfields(cmd, opt)
                 continue
             if opt.text.startswith("[Deprecated]"):
                 continue
             if "mandatory" in opt.attrib and opt.attrib["mandatory"] == "True":
                 mandatory = True
             label = "<b>%s:</b> %s" % (opt.attrib["name"], opt.text)
+            name = opt.attrib["name"]
             if mandatory:
                 label = label + "<font color='red'>*</font>"
+            label = "<li><label for='%s'>%s</label>" % (name, label)
             if opt.attrib['type'] == "boolean" or opt.attrib['type'] == 'flag':
-                c.form.append("<li><label for='%s'>%s</label><input id='%s' name='%s' type='checkbox' value='1'/></li>" % (opt.attrib["name"], label, opt.attrib["name"], opt.attrib["name"]))
+                c.form.append("%s<input id='%s' name='%s' type='checkbox' value='1'/></li>" % (label, name, name))
             else:
-                c.form.append("<li><label for='%s'>%s</label><input id='%s' name='%s' size='48' value=''/></li>" % (opt.attrib["name"], label, opt.attrib["name"], opt.attrib["name"]))
+                if name in lookup and not cmd.startswith("add_%s" % name):
+                    inf = lookup[name]
+                    invoke = [inf["cmd"], "--all"]
+                    if inf["fmt"] != "":
+                        invoke.extend(["--format", inf["fmt"]])
+                    (stdout, stderr) = aq(invoke)
+                    c.form.append("%s<select id='%s' name='%s'>" % 
+                                  (label, name, name))
+                    options = stdout.split("\n")
+                    for opt in csv.reader(options):
+                        if len(opt) == 0:
+                            continue
+                        if 'label' in inf:
+                            label = opt[inf['label']]
+                        else:
+                            label = opt[0]
+                        if 'value' in inf:
+                            value = opt[inf['value']]
+                        else:
+                            value = opt[0]
+                        if label == "":
+                            label = value
+                        c.form.append("<option value='%s'>%s</option>" 
+                                      % (value, label))
+                    c.form.append("</select>")
+                else:
+                    c.form.append("%s<input id='%s' name='%s' size='48' value=''/></li>" % (label, name, name))
         c.form.append("</ol></fieldset>")
 
     def index(self):
@@ -154,7 +202,7 @@ class ApplianceController(BaseController):
 
             c.text = cmdnode.text
             for group in cmdnode.findall("optgroup"):
-                self.emitfields(group)
+                self.emitfields(cmd, group)
 
         if "_return" in request.params:
             c.form.append("<input type='hidden' name='_return' value='%s'\>" % 
