@@ -1,6 +1,7 @@
 
-DESTDIR=/opt/aquilon/lib/pylons
-
+BASE=/opt/aquilon
 
 install:
-	rsync -av pylons/ $(DESTDIR)
+	rsync -av pylons/ $(BASE)/lib/pylons
+	mkdir $(BASE)/etc/sv
+	rsync -av etc/pylons/ $(BASE)/etc/sv/pylons
