@@ -30,6 +30,8 @@ realm_re = re.compile('(\s*default_realm\s*=\s*)([a-zA-Z.]*)')
 # provide "overlay" information until that time.
 lookup = {
     'archetype': {'cmd':'show_archetype','fmt':'csv'},
+    'personality': {'cmd':'show_personality','fmt':'csv'},
+    'osname': {'cmd':'show_os','fmt':'csv'},
     'model': {'cmd':'show_model','fmt':'csv'},
     'hub': {'cmd':'show_hub','fmt':'csv', 'label':7,'value':1},
     'organization': {'cmd':'show_organization','fmt':'csv','label':7,'value':1},
@@ -40,6 +42,7 @@ lookup = {
     'rack': {'cmd':'show_rack','fmt':'csv', 'label':7,'value':1},
     'dns_domain': {'cmd':'show_dns_domain','fmt':'csv'},
     'principal': {'cmd':'show_principal','fmt':'csv'},
+    'hostname': {'cmd':'show_host','fmt':'csv'},
     'machine': {'cmd':'show_machine','fmt':''},
     'vendor': {'cmd':'show_vendor','fmt':'csv'},
     'cpuname': {'cmd':'show_cpu','fmt':'csv'},
