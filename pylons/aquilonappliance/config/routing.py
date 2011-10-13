@@ -21,6 +21,7 @@ def make_map(config):
     # CUSTOM ROUTES HERE
 
     map.connect('/', controller='appliance', action='status')
+    map.connect('/about', controller='appliance', action='about')
     map.connect('/form/{cmd}', controller='appliance', action='generate_form',
                 conditions=dict(method=['GET']))
     map.connect('/form/{cmd}', controller='appliance', action='process_form',

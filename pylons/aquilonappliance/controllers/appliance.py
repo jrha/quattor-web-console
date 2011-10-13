@@ -330,7 +330,10 @@ class ApplianceController(BaseController):
         for (key, value) in c.space.items():
             c.totalspace += value
 
-        return render('/status.mako');
+        return render('/status.mako')
+
+    def about(self):
+        return render('/credits.mako')
 
     def reset_form(self):
         c.profiles = ''
