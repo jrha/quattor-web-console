@@ -41,6 +41,8 @@ lookup = {
     'dns_domain': {'cmd':'show_dns_domain','fmt':'csv'},
     'principal': {'cmd':'show_principal','fmt':'csv'},
     'machine': {'cmd':'show_machine','fmt':''},
+    'vendor': {'cmd':'show_vendor','fmt':'csv'},
+    'cpuname': {'cmd':'show_cpu','fmt':'csv'},
 }
 
 def space_used(dir, units):
