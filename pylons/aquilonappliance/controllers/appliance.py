@@ -163,6 +163,8 @@ class ApplianceController(BaseController):
                             label = value
                         c.form.append("<option value='%s'>%s</option>" 
                                       % (value, label))
+                    if not mandatory:
+                        c.form.append("<option value='' selected='selected'>&lt;unspecified&gt;</select>")
                     c.form.append("</select>")
                 else:
                     c.form.append("%s<input id='%s' name='%s' size='48' value=''/></li>" % (label, name, name))
