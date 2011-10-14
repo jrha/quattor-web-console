@@ -1,0 +1,3 @@
+include aquilonappliance/config/deployment.ini_tmpl
+recursive-include aquilonappliance/public *
+recursive-include aquilonappliance/templates *
