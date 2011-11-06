@@ -1,0 +1,57 @@
+#!/bin/sh -
+
+set -e
+
+
+case "$1" in
+  configure)
+
+    test -d /var/quattor/templates || mkdir /var/quattor/templates
+    test -d /var/quattor/template-king || mkdir /var/quattor/template-king
+    test -d /var/quattor/deps || mkdir /var/quattor/deps
+    test -d /var/quattor/hosts || mkdir /var/quattor/hosts
+    chown -R cdb /var/cache/pylons
+    chown -R cdb /var/quattor
+    chown cdb /etc/aqd.conf
+    # This is a bit keen, but since in appliance mode we "own"
+    # the machine, why not...? We need this in order to create
+    # new service links from the web interface
+    chown cdb /etc/service
+
+    # Hook in our new services
+    chown -R cdb /var/lib/supervise/pylons*
+    chown -R cdb /var/lib/supervise/git-daemon*
+    chown -R cdb /var/lib/supervise/aqd*
+    chown -R cdb /var/lib/supervise/knc*
+    if [ ! -h /etc/service/pylons ]; then
+        ln -s /opt/aquilon/etc/sv/pylons /etc/service/pylons
+	# if supervise is not running, this will fail, but no problem
+        svc -u /etc/service/pylons
+    fi
+    if [ ! -h /etc/service/knc ]; then
+        ln -s /opt/aquilon/etc/sv/knc /etc/service/knc
+	# if supervise is not running, this will fail, but no problem
+        svc -u /etc/service/knc
+    fi
+    if [ ! -h /etc/service/git-daemon ]; then
+        ln -s /opt/aquilon/etc/sv/git-daemon /etc/service/git-daemon
+	# if supervise is not running, this will fail, but no problem
+        svc -u /etc/service/git-daemon
+    fi
+
+    services=/etc/confconsole/services.txt
+    if [ -f $services ]; then
+        if ! grep Aquilon $services; then 
+            cp $services $services.orig
+            cat - $services.orig >$services <<EOF
+Aquilon:    http://\$ipaddr:5000
+EOF
+        fi
+    fi
+
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

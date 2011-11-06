@@ -1,0 +1,5 @@
+#!/bin/sh
+
+svc -d /etc/service/pylons
+
+exit 0

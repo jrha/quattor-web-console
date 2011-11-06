@@ -1,0 +1,4 @@
+#!/bin/sh
+exec 2>&1
+echo 'knc starting.'
+exec envdir environment setuidgid cdb /usr/local/bin/knc -lS /var/quattor/run/sockets/kncsock 6900
