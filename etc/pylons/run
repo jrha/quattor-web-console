@@ -1,4 +1,4 @@
 #!/bin/sh
 exec 2>&1
 echo 'pylons starting.'
-exec setuidgid cdb /opt/aquilon/lib/pylons/server.py
+exec setuidgid cdb /opt/aquilon/bin/python2.6 /opt/aquilon/lib/pylons/server.py

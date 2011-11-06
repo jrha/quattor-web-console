@@ -1,0 +1,14 @@
+Source: aquilon-appliance
+Section: admin
+Priority: optional
+Maintainer: Nick Williams <njw@me.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://quattor.org
+
+Package: aquilon-appliance
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, aquilon, daemontools-run, sudo, couchdb
+Description: An interface for managing an Aquilon appliance
+ Aquilon can be applied in an "appliance" mode. This package
+ contains tools for managing such an Aquilon installation
