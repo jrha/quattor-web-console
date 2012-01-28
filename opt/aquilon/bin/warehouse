@@ -1,0 +1,112 @@
+#!/usr/bin/python
+
+import sys
+import os
+import urllib
+import re
+import time
+import datetime
+from xml.etree import ElementTree as ETree
+
+BINDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+sys.path.append(os.path.join(BINDIR, "..", "lib", "python2.6"))
+import warehouse
+from warehouse import debug
+
+profile_url_re = re.compile('(.*).xml')
+
+def main():
+    base = warehouse.get("profiles")
+    db = warehouse.get_or_create_db()
+
+    if sys.argv[1] == 'update':
+        warehouse_update(db, base)
+
+    update = db['update']
+    print "profiles: %d" % len(db.view("views/profile_mtimes", None))
+    when = datetime.datetime.utcfromtimestamp(update['last_start'])
+    print "last update: %s" % when
+    print "last update duration: %.2fs" % update['elapsed']
+
+def warehouse_update(db, base):
+    update = dict()
+    if 'update' in db:
+        update = db['update']
+
+    start = time.time()
+    current_ids = process_info(db, base)
+    for row in db.view("views/profile_mtimes", None):
+        if row.id not in current_ids:
+            debug("deleting %s" % id)
+            del db[id]
+    end = time.time()
+
+    update['elapsed'] = end - start
+    update['last_start'] = start
+    db['update'] = update
+
+def process_info(db, base):
+    etree = ETree.parse(urllib.urlopen(base + '/profiles-info.xml'))
+    profiles = etree.getroot()
+    ids = list()
+    for p in profiles:
+        m = profile_url_re.match(p.text)
+        if m:
+            name = m.group(1)
+            ids.append(name)
+            if name in db:
+                if int(p.attrib['mtime']) != db[name]['mtime']:
+                    debug("updating %s" % name)
+                    doc = get_profile(base, name, int(p.attrib['mtime']))
+                    doc['_rev'] = db[name]['_rev']
+                    db[name] = doc
+                else:
+                    debug("no change for %s" % name)
+            else:
+                debug("inserting %s" % name)
+                doc = get_profile(base, name, int(p.attrib['mtime']))
+                db[name] = doc
+
+    return ids
+
+def get_profile(base, name, mtime):
+    doc = urllib.urlopen(base + '/' + name + '.xml')
+    etree = ETree.parse(doc)
+    fmt = etree.getroot().attrib["format"]
+
+    x = dict()
+    x['config'] = parse_node(etree.getroot(), fmt)
+    x['mtime'] = mtime
+    return x
+
+def parse_node(node, fmt):
+    if fmt == "pan":
+        type = node.tag
+    else:
+        type = node.attrib["type"]
+
+    if type == "nlist":
+        ret = dict()
+        for child in node:
+            if fmt == "pan":
+                cname = child.attrib["name"]
+            else:
+                cname = child.tag
+            ret[cname] = parse_node(child, fmt)
+        return ret
+    elif type == "list":
+        ret = list()
+        for child in node:
+            ret.append(parse_node(child, fmt))
+        return ret
+    elif type == "string":
+        return node.text
+    elif type == "long":
+        return int(node.text)
+    elif type == "boolean":
+        if node.text == "true":
+            return True
+        else:
+            return False
+
+main()

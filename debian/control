@@ -8,7 +8,7 @@ Homepage: http://quattor.org
 
 Package: aquilon-appliance
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, aquilon, daemontools-run, sudo, couchdb
+Depends: ${shlibs:Depends}, ${misc:Depends}, aquilon, daemontools-run, sudo, couchdb, adduser, python-pylons, python-couchdb, python-kerberos, krb5-user
 Description: An interface for managing an Aquilon appliance
  Aquilon can be applied in an "appliance" mode. This package
  contains tools for managing such an Aquilon installation

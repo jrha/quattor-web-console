@@ -4,7 +4,8 @@ BASE=$(DESTDIR)/opt/aquilon
 build:
 
 install:
-	-mkdir -p $(BASE)/lib
-	rsync -av pylons/ $(BASE)/lib/pylons
-	-mkdir -p $(BASE)/etc/sv
-	rsync -av etc/pylons/ $(BASE)/etc/sv/pylons
+	rsync -av opt $(DESTDIR)/
+	chown -R cdb $(DESTDIR)
+	rsync -av var $(DESTDIR)/
+	chown -R cdb $(DESTDIR)/var/lib/supervise/*
+	install -m 0644 -o cdb -D opt/aquilon/etc/appliance.conf $(DESTDIR)/etc/aqd.conf
