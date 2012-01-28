@@ -31,6 +31,7 @@ options:
 <li><a href='/form/add_machine?_return=/reset/manual'>Add a machine</a>
 <li><a href='/form/add_interface?_return=/reset/manual'>Add a network interface to that machine</a>
 <li><a href='/form/add_host?_return=/reset/manual'>Add a host configuration to your machine</a>
+<li><a href='/form/make?_return=/reset/manual'>Compile the host's configuration</a>
 </ol>
 
 
