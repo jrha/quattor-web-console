@@ -432,6 +432,8 @@ class ApplianceController(BaseController):
         shutil.copy("/opt/aquilon/etc/minimal.dump", "/tmp/bootstrap.dump")
         realm = get_realm()
         principal = "cdb/aqd.aquilon.example.com"
+        paninfo = { 'version':cfg.get("panc", "version") }
+        compiler = cfg.get("panc", "pan_compiler") % paninfo
         fd = open("/tmp/bootstrap.dump", "a")
         fd.write("Realm(name=\"%s\")\n" % realm)
         fd.write("UserPrincipal(name=\"%s\", role=Role(name=\"aqd_admin\"), "
@@ -439,8 +441,7 @@ class ApplianceController(BaseController):
         fd.write("UserPrincipal(name=\"%s\", role=Role(name=\"aqd_admin\"), "
                  "realm=Realm(name=\"%s\"))\n" % ("cdb", realm))
         fd.write("Domain(name=\"prod\", owner=UserPrincipal(name=\"%s\"),"
-                 "compiler=\"/opt/aquilon/lib/panc/panc-prod.jar\")\n" %
-                  principal)
+                 "compiler=\"%s\")\n" % (principal, compiler))
         fd.write("Company(name=\"%s\", fullname=\"%s\")\n" % 
                  (request.params["org"], request.params["orgtext"]))
         fd.close()
