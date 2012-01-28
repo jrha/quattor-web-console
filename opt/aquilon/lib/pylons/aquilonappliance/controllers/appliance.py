@@ -135,21 +135,25 @@ class ApplianceController(BaseController):
                 mandatory = True
             label = "<b>%s:</b> %s" % (opt.attrib["name"], opt.text)
             name = opt.attrib["name"]
+            basename = name
+            if name.endswith("name"):
+                basename = name[:-4]
             if mandatory:
                 label = label + "<font color='red'>*</font>"
             label = "<li><label for='%s'>%s</label>" % (name, label)
             if opt.attrib['type'] == "boolean" or opt.attrib['type'] == 'flag':
                 c.form.append("%s<input id='%s' name='%s' type='checkbox' value='1'/></li>" % (label, name, name))
             else:
-                if name in lookup and not cmd.startswith("add_%s" % name):
+                field = "%s<input id='%s' name='%s' size='48' value=''/></li>" % (label, name, name)
+                if name in lookup and (cmd != "add_%s" % basename):
                     inf = lookup[name]
                     invoke = [inf["cmd"], "--all"]
                     if inf["fmt"] != "":
                         invoke.extend(["--format", inf["fmt"]])
                     (stdout, stderr) = aq(invoke)
-                    c.form.append("%s<select id='%s' name='%s'>" % 
-                                  (label, name, name))
                     options = stdout.split("\n")
+                    field = ("%s<select id='%s' name='%s'>" % 
+                                  (label, name, name))
                     for opt in csv.reader(options):
                         if len(opt) == 0:
                             continue
@@ -272,16 +276,27 @@ class ApplianceController(BaseController):
                 else:
                     if request.params[key] != "":
                         args.append("--%s=%s" % (key, request.params[key]))
+
             elif key.startswith("_input_"):
                 # This is a faked up key that we made!
                 m = re.match("_input_(.*)", key)
                 selector = m.group(1)
                 if selector in request.params:
-                    args.append("--%s=%s" % (request.params[selector],
-                                             request.params[key]))
+                    realopt = request.params[selector]
+                    if realopt in opttypes and (
+                        opttypes[realopt] == 'flag' or
+                        opttypes[realopt] == 'boolean'):
+                        args.append("--%s" % realopt)
+                    else:
+                        args.append("--%s=%s" % (realopt,
+                                                 request.params[key]))
 
         (c.stdout, c.stderr) = aq(args)
         if c.stderr == "acquired compile lock\nreleasing compile lock\n":
+            c.stderr = ""
+        compileoutput = re.compile(".*BUILD SUCCESSFUL.*", re.DOTALL)
+        if compileoutput.match(c.stderr):
+            c.stdout = c.stderr
             c.stderr = ""
         if c.stderr == "" and "_return" in request.params:
             return redirect(request.params["_return"])
