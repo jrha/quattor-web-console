@@ -163,14 +163,45 @@ class ApplianceController(BaseController):
                             value = opt[0]
                         if label == "":
                             label = value
-                        c.form.append("<option value='%s'>%s</option>" 
-                                      % (value, label))
+                        field = field + "<option value='%s'>%s</option>" % (value, label)
                     if not mandatory:
-                        c.form.append("<option value='' selected='selected'>&lt;unspecified&gt;</select>")
-                    c.form.append("</select>")
-                else:
-                    c.form.append("%s<input id='%s' name='%s' size='48' value=''/></li>" % (label, name, name))
+                        field = field + "<option value='' selected='selected'>&lt;unspecified&gt;</select>"
+                    field = field + "</select>"
+
+                c.form.append(field)
+
         c.form.append("</ol></fieldset>")
+
+    def commandindex(self):
+        c.objects = dict()
+        c.commands = dict()
+        description = dict()
+        input = open('/opt/aquilon/etc/input.xml')
+        etree = ETree.parse(input)
+        for cmdnode in etree.getroot().findall("command"):
+            name = cmdnode.attrib['name']
+            if name == '*':
+                continue
+            description[name] = cmdnode.text
+            objectmatch = re.compile('((?:add)|(?:del)|(?:update)|(?:show)|(?:search))_(.*)')
+            m = objectmatch.match(name)
+            if m:
+                if m.group(2) not in c.objects:
+                    c.objects[m.group(2)] = dict()
+                c.objects[m.group(2)][m.group(1)] = name
+            else:
+                c.commands[name] = cmdnode.text
+
+        # After we've partitioned all the commands into CRUD objects and
+        # non-crud stuff, we may have guessed some of it wrongly...
+        for obj in c.objects.keys():
+            if len(c.objects[obj].keys()) < 2:
+                origcmd = c.objects[obj].values()[0]
+                c.commands[origcmd] = description[origcmd]
+                del c.objects[obj]
+ 
+        return render('/commands.mako')
+
 
     def index(self):
         # Return a rendered template

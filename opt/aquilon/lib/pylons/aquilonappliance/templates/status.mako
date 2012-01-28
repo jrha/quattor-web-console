@@ -1,5 +1,7 @@
 <%inherit file="/base.mako"/>
 
+<a href='commands'>List of all Aquilon commands</a>
+
 <h2>Broker Status</h2>
 <%
 if len(c.broker) == 1:
