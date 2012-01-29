@@ -22,10 +22,11 @@ def make_map(config):
 
     map.connect('/', controller='appliance', action='status')
     map.connect('/about', controller='appliance', action='about')
-    map.connect('/commands', controller='appliance', action='commandindex')
-    map.connect('/form/{cmd}', controller='appliance', action='generate_form',
+
+    map.connect('/commands', controller='forms', action='index')
+    map.connect('/form/{cmd}', controller='forms', action='generate_form',
                 conditions=dict(method=['GET']))
-    map.connect('/form/{cmd}', controller='appliance', action='process_form',
+    map.connect('/form/{cmd}', controller='forms', action='process_form',
                 conditions=dict(method=['POST']))
 
     map.connect('/appliance/log/{log}', controller='appliance', action='log')
