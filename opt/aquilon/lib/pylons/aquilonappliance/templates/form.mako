@@ -1,6 +1,13 @@
 <%inherit file="/base.mako"/>
 
-<h2>${c.cmd}</h2>
+<h2>
+<%
+if c.documentation:
+    context.write("<a href='%s'>%s</a>" % (c.documentation, c.cmd))
+else:
+    context.write(c.cmd)
+%>
+</h2>
 <p>
 ${c.text}
 <p>
