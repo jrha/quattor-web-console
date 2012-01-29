@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    font: normal 70% "Lucida Grande", Helvetica, Verdana, Arial;
+    font: normal 90% "Lucida Grande", Helvetica, Verdana, Arial;
     margin-left: 100px;
     margin-right: 100px;
 }
@@ -24,6 +24,10 @@ pre {
 }
 .log {
     font: normal 110% courier;
+}
+
+form {
+    font: normal 75% "Lucida Grande", Helvetica, Verdana, Arial;
 }
 
 form.cmxform fieldset { margin-bottom: 10px; }
@@ -72,13 +76,13 @@ form.cmxform em {
 	color: #f00;
 	}
 
-form.cmxform label { width: 200px; } /* Width of labels */
-form.cmxform fieldset fieldset label { margin-left: 123px; } /* Width plus 3 (html space) */
+form.cmxform label { width: 300px; } /* Width of labels */
+form.cmxform fieldset fieldset label { margin-left: 303px; } /* Width plus 3 (html space) */
 
 /*\*//*/ form.cmxform legend { display: inline-block; } /* IE Mac legend fix */
 
 form.cmxform {
-	width: 570px;
+	width: 670px;
 	font-size: 1.1em;
 	color: #333;
 	}
