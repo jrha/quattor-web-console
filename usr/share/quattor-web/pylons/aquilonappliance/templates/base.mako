@@ -1,18 +1,29 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Aquilon Appliance Management</title>
+<title>Quattor Web Console</title>
 <script language="javascript" type="text/javascript" src="/flot/jquery.js"></script>
 <script language="javascript" type="text/javascript" src="/flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="/flot/jquery.flot.pie.js"></script>
-<link rel='stylesheet' type='text/css' href='/style.css'>
+<!--link rel='stylesheet' type='text/css' href='/style.css'-->
+<link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap.min.css'>
+<link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap-responsive.min.css'>
 </head>
 <body>
-<a align='left' href="http://www.quattor.org/"><img align='left' border="0" src="/images/aquilon-logo.png" alt="Aquilon"></a>
-<a align='right' href="http://www.quattor.org/"><img align='right' border="0" src="/images/quattor-logo.png" alt="Quattor"></a>
-<br clear='all'/>
-<hr>
+<div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/"><img src="/images/quattor_logo_navbar.png" width="94" height="23" alt="quattor logo"/></a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          <li><a href="/commands">Aquilon Commands</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
 ${next.body()}
-
-<hr>
+</div>
 </body>
 </html>
