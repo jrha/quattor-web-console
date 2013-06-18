@@ -1,7 +1,0 @@
-#!/bin/sh
-set -e
-
-LOG=/var/quattor/logs/pylons
-
-test -d "$LOG" || mkdir -p -m2750 "$LOG" && chown cdb "$LOG"
-exec setuidgid cdb multilog t "$LOG"

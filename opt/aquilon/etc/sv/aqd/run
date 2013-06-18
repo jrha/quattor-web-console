@@ -1,4 +1,0 @@
-#!/bin/sh
-exec 2>&1
-echo 'aquilon broker starting.'
-exec envdir environment setuidgid cdb /opt/aquilon/bin/twistd --nodaemon --pidfile=/var/quattor/run/aqd/twistd.pid --logfile=/var/quattor/logs/aqd.log aqd --config /etc/aqd.conf --authonly

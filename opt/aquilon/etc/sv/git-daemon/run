@@ -1,4 +1,0 @@
-#!/bin/sh
-exec 2>&1
-echo 'git-daemon starting.'
-exec setuidgid cdb /usr/lib/git-core/git-daemon --export-all --base-path=/var /var/quattor/template-king
