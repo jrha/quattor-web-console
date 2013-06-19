@@ -9,14 +9,14 @@
 <link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap.min.css'>
 <link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap-responsive.min.css'>
 </head>
-<body>
-<div class="navbar navbar-inverse">
+<body style="padding-top: 64px">
+<div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="/"><img src="/images/quattor_logo_navbar.png" width="94" height="23" alt="quattor logo"/></a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-          <li><a href="/commands">Aquilon Commands</a></li>
+          <li><a href="/commands">Commands</a></li>
         </ul>
       </div>
     </div>
