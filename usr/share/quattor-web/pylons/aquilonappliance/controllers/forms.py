@@ -44,10 +44,11 @@ lookup = {
 
 def aq(cmd):
     env = dict()
-    env["KRB5CCNAME"] = "FILE:/var/spool/tickets/cdb"
-    env["PATH"] = "/opt/aquilon/bin:/usr/local/bin:/usr/bin:/bin"
+    #env["KRB5CCNAME"] = "FILE:/var/spool/tickets/cdb"
+    env["PATH"] = "/usr/local/aquilon/pythonenv/bin:/opt/aquilon/bin:/usr/local/bin:/usr/bin:/bin"
     args = ["/opt/aquilon/bin/aq"]
     args.extend(cmd)
+    args.append("--noauth")
     # close all web file descriptors!
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, close_fds=True)
     (stdout, stderr) = p.communicate();
@@ -90,14 +91,14 @@ class FormsController(BaseController):
         if "mandatory" in group.attrib and group.attrib["mandatory"] == "True":
             mandatory = True
 
-        c.form.append("<fieldset><legend>%s</legend><ol>" % group.attrib["name"])
+        c.form.append("<fieldset><legend>%s</legend><ol>" % group.attrib["name"].replace("_opts", ""))
         gname = group.attrib["name"]
         if "fields" in group.attrib and group.attrib["fields"] == "any":
             label = "<b>%s:</b>" % group.attrib["name"]
             if group.text:
                 label += " %s" % group.text
             if mandatory:
-                label = label + "<font color='red'>*</font>"
+                label = label + "<span class='badge badge-important'>mandatory</span>"
             # Only one-of needs to be specified, so run through children
             # finding all the possibles and make a combobox
             gname_extra = "_input_" + gname
@@ -115,7 +116,7 @@ class FormsController(BaseController):
             for opt in combo:
                 c.form.append("<option>%s</option>" % opt)
             c.form.append("</select>")
-            c.form.append("<input id='%s' name='%s' size='38'/></li>" %
+            c.form.append("<input id='%s' name='%s' size='38' type='text' /></li>" %
                           (gname_extra, gname_extra))
             c.form.append("</ol></fieldset>")
             return
@@ -134,12 +135,12 @@ class FormsController(BaseController):
             if name.endswith("name"):
                 basename = name[:-4]
             if mandatory:
-                label = label + "<font color='red'>*</font>"
+                label = label + " <span class='badge badge-important'>mandatory</span>"
             label = "<li><label for='%s'>%s</label>" % (name, label)
             if opt.attrib['type'] == "boolean" or opt.attrib['type'] == 'flag':
                 c.form.append("%s<input id='%s' name='%s' type='checkbox' value='1'/></li>" % (label, name, name))
             else:
-                field = "%s<input id='%s' name='%s' size='48' value=''/></li>" % (label, name, name)
+                field = "%s<input id='%s' name='%s' size='48' value='' type='text' placeholder='%s' /></li>" % (label, name, name, basename)
                 if name in lookup and (cmd != "add_%s" % basename):
                     inf = lookup[name]
                     invoke = [inf["cmd"], "--all"]
@@ -190,7 +191,7 @@ class FormsController(BaseController):
         if "_return" in request.params:
             c.form.append("<input type='hidden' name='_return' value='%s'\>" % 
                           request.params["_return"])
-        c.form.append("<input type='submit' value='%s'/>" % cmd)
+        c.form.append("<input type='submit' value='%s' class='btn btn-primary' />" % cmd.replace("_", " "))
 
         return render('/form.mako')
 
