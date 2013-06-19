@@ -1,64 +1,57 @@
 <%inherit file="/base.mako"/>
 
-<a href='commands'>List of all Aquilon commands</a>
-
 <h2>Broker Status</h2>
 <%
-if len(c.broker) == 1:
-    context.write("<p>" + c.broker[0])
-else:
-  context.write("<table>")
-  for i in c.broker:
-    columns = i.split(":", 1)
-    if len(columns) > 1:
-        context.write("<tr><th>" + columns[0] + "</th><td>" + 
-                       columns[1] + "</td></tr>")
-    else:
-        context.write("<tr><th>" + columns[0] + "</th></tr>")
-  context.write("</table>")
+context.write("<dl class='dl-horizontal'>\n")
+for i in c.broker:
+    if i:
+        columns = i.split(":", 1)
+        if len(columns) > 1:
+            context.write("<dt>" + columns[0] + "</dt><dd>" + columns[1] + "</dd>\n")
+        else:
+            context.write("<dt><i class='icon-info-sign'></i></dt><dd>" + columns[0] + "</dd>\n")
+context.write("</dl>\n")
 %>
 <%
-if len(c.brokererr) > 0:
-    context.write("<pre class='errors'>")
-    context.write("<br>".join(c.brokererr))
-    context.write("</pre>")
+if hasattr(c, "brokererr"):
+    if c.brokererr and len(c.brokererr) > 0:
+        context.write("<pre class='text-error'>")
+        context.write("<br>".join(c.brokererr))
+        context.write("</pre>")
 %>
 
-See also the <a href='/appliance/log/aqd'>broker logs</a>
+<a href='/appliance/log/aqd'>Broker logs</a>
 
-<h2>Datawarehouse Status</h2>
-<p>
-<a href='http://${c.base}:5984/_utils/database.html?profiles'>View the datawarehouse</a>
-<p>
-See also the <a href='/appliance/log/warehouse'>datawarehouse logs</a>
-<p>
-<table>
+<h2>Space Usage</h2>
+<div class='row'>
+<div class='span4'>
+<dl class='dl-horizontal'>
 <%
-for i in c.warehouse:
-  columns = i.split(":", 1)
-  if len(columns) > 1:
-      context.write("<tr><th>" + columns[0] + "</th><td>" + 
-                     columns[1] + "</td></tr>")
-  else:
-      context.write("<tr><th>" + columns[0] + "</th></tr>")
+
+space_items = c.space.items()
+
+space_items = sorted(space_items, key=lambda item: item[0]) 
+
+for (label, value) in space_items:
+    context.write("<dt>%s</dt><dd>%d MB</dd>\n" % (label, value))
 %>
-</table>
-<form method='POST' action='/warehouse/update'>
-<input type='submit' value='Sync Datawarehouse'>
-</form>
-
-
-<h2>Appliance Utilization</h2>
-<p>Total managed space is ${c.totalspace}${c.units_as_text}
-
-    <div id="spaceused" style="width:300px;height:300px;"></div>
+</dl>
+</div>
+<div class='span8'>
+<div id="spaceused" style="width:300px;height:300px;"></div>
+</div>
+</div>
 
 <script type="text/javascript">
 $(function () {
     var data = [
 <%
-for (label, value) in c.space.items():
-    context.write("{ label: \"%s\", data: %d}," % (label, value))
+colors = ['#049cdb','#46a546','#9d261d','#ffc40d','#f89406','#c3325f','#7a43b6']
+i = 0
+for (label, value) in space_items:
+    color = colors[i % len(colors)]
+    context.write("{ label: \"%s\", data: %d, color: '%s'}," % (label, value, color))
+    i += 1
 %>
     ];
     $.plot($("#spaceused"), data, { 
