@@ -2,15 +2,17 @@
 
 <h2>
 <%
+cmd = c.cmd.replace("_", " ")
 if c.documentation:
-    context.write("<a href='%s'>%s</a>" % (c.documentation, c.cmd))
+    context.write("<a href='%s'>%s</a>" % (c.documentation, cmd))
 else:
-    context.write(c.cmd)
+    context.write(cmd)
 %>
 </h2>
-<p>
-${c.text}
-<p>
+<%
+for line in c.text.split(".")[:-1]:
+    context.write("<p>%s.</p>\n" % line.replace("\n","").strip())
+%>
 <form method='POST' action='/form/${c.cmd}' class='cmxform'>
 <%
 for line in c.form:
