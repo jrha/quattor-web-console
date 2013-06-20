@@ -5,11 +5,17 @@
 <script language="javascript" type="text/javascript" src="/flot/jquery.js"></script>
 <script language="javascript" type="text/javascript" src="/flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="/flot/jquery.flot.pie.js"></script>
-<!--link rel='stylesheet' type='text/css' href='/style.css'-->
 <link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap.min.css'>
 <link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap-responsive.min.css'>
+<style type="text/css">
+  @import url(http://fonts.googleapis.com/css?family=Lato:400);
+  body {
+    padding-top: 64px;
+    font-family: 'Lato', 'Helvetica', sans-serif;
+}
+</style>
 </head>
-<body style="padding-top: 64px">
+<body>
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
