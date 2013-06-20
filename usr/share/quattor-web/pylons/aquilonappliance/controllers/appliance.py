@@ -32,18 +32,9 @@ def tail(filename, count=24):
 
 def space_used(dir, units):
     total = 0
-    for item in os.listdir(dir):
-        path = os.path.join(dir, item)
-        try:
-            st = os.stat(path)
-        except:
-            pass
-        total += st.st_size
-        if isdir(path) and not islink(path):
-            try:
-                total += space_used(path, units)
-            except:
-                pass
+    cmd = ["du", "-s", "-b", dir]
+    total = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).communicate()[0]
+    total = int(total.split()[0])
     return total/units
 
 def get_realm():
@@ -141,25 +132,22 @@ class ApplianceController(BaseController):
         status = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True).communicate()[0];
         c.warehouse = status.split("\n");
 
-        # Look at the disk space used
-        disk = os.statvfs("/var")
         units = 1024*1024 # MiB
         c.units_as_text = "MiB"
+
         c.space = dict()
-        c.space["free"] = (disk.f_bsize * disk.f_bavail)/units
-        c.space["aqdb"] = space_used(cfg.get("database", "dbdir"), units)
-        c.space["warehouse"] = space_used("/var/lib/couchdb", units)
-        c.space["logs"] = space_used("/var/log", units) + \
-                          space_used(cfg.get("DEFAULT", "logdir"), units)
-        c.space["templates"] = space_used(cfg.get("broker", "domainsdir"), units) + \
-                               space_used(cfg.get("broker", "templatesdir"), units) + \
-                               space_used(cfg.get("broker", "kingdir"), units)
-        c.space["profiles"] = space_used(cfg.get("broker", "profilesdir"), units) + \
-                              space_used(cfg.get("broker", "depsdir"), units) + \
-                              space_used(cfg.get("broker", "hostsdir"), units)
-        c.totalspace = 0
-        for (key, value) in c.space.items():
-            c.totalspace += value
+
+        # Look at the disk space used
+        if os.path.isdir("/var/lib/pgsql/"):
+            c.space["PostgreSQL"] = space_used("/var/lib/pgsql/", units)
+        if os.path.isdir("/var/lib/couchdb/"):
+            c.space["CouchDB"] = space_used("/var/lib/couchdb", units)
+        c.space["Logs"] = space_used("/var/log", units)
+        c.space["Domains"] = space_used(cfg.get("broker", "domainsdir"), units)
+        c.space["Plenary"] = space_used(cfg.get("broker", "plenarydir"), units)
+        c.space["Sandboxes"] = space_used(cfg.get("broker", "templatesdir"), units)
+        c.space["Git King"] = space_used(cfg.get("broker", "kingdir"), units)
+        c.space["Profiles"] = space_used(cfg.get("broker", "profilesdir"), units)
 
         return render('/status.mako')
 
