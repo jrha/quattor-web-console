@@ -1,9 +1,7 @@
 <%inherit file="/base.mako"/>
 
-<h2>Log for ${c.title}</h2>
-<pre class='log'>
-<%
+<h2>Tail of ${c.title} log</h2>
+<pre><%
 for line in c.log:
     context.write(line)
-%>
-</pre>
+%></pre>
