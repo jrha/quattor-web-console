@@ -111,18 +111,25 @@ class ApplianceController(BaseController):
         c.base = c.base.replace(":" + request.environ["SERVER_PORT"], "")
 
         # Get the broker status
-        d = Daemontool("aqd", "/opt/aquilon/etc/sv/aqd")
+        d = Daemontool("aqd")
         stat = d.status()
         if stat == 200:
+            c.broker = ["Daemon: aqd broker is running"]
             (stdout, stderr) = aq(["status"])
-            c.broker = []
             c.brokererr = []
             if stdout:
-                c.broker = stdout.split("\n");
+                c.broker.extend(stdout.split("\n"));
             if stderr:
-                c.brokererr = stderr.split("\n");
+                c.brokererr.extend(stderr.split("\n"));
+
+            (stdout, stderr) = aq(["show_host", "--all"])
+            if stdout:
+                c.broker.append("Managed hosts:%s" % len(stdout.split("\n")));
+            if stderr:
+                c.brokererr.extend(stderr.split("\n"));
+            c.brokererr = []
         else:
-            c.broker = ["The broker is not running"]
+            c.broker = ["Daemon: aqd broker is not running"]
 
         # And the warehouse status
         warehouse_bin = "/opt/aquilon/bin/warehouse"
@@ -150,36 +157,16 @@ class ApplianceController(BaseController):
 
         return render('/status.mako')
 
-    def about(self):
-        return render('/credits.mako')
-
 class Daemontool:
-    def __init__(self, name=None, source=None):
+    def __init__(self, name=None):
         self.name = name
-        self.source = source
-        self.base = "/etc/service"
-        self.bin = "/usr/bin"
+        self.base = "/etc/init.d"
 
     def status(self):
-        if not os.path.isdir("%s/%s" % (self.base, self.name)):
+        if not os.path.exists("%s/%s" % (self.base, self.name)):
             return 404
-        cmd = ["sudo", "%s/svstat" % self.bin, "%s/%s" % (self.base, self.name)]
-        out = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, close_fds=True).communicate()[0];
-        if out.startswith("%s/%s: down" % (self.base, self.name)):
-            return 500
-        return 200
-
-    def start(self):
-        if not os.path.isdir("%s/%s" % (self.base, self.name)):
-            os.symlink(self.source, "%s/%s" % (self.base, self.name))
-        cmd = ["sudo", "%s/svc" % self.bin, "-u", "%s/%s" % (self.base, self.name)]
-        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True,
-                               stderr=subprocess.PIPE).communicate()[0];
-        
-    def stop(self):
-        cmd = ["sudo", "%s/svc" % self.bin, "-d", "%s/%s" % (self.base, self.name)]
-        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True,
-                               stderr=subprocess.PIPE).communicate()[0];
-        
-
+        cmd = ["%s/%s" % (self.base, self.name), "status"]
+        out = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).communicate()[0];
+        if "is running" in out:
+            return 200
+        return 500
