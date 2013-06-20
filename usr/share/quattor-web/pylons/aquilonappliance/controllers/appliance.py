@@ -134,7 +134,7 @@ class ApplianceController(BaseController):
 
         # And the warehouse status
         warehouse_bin = "/opt/aquilon/bin/warehouse"
-        if os.exists(warehouse_bin)
+        if os.path.exists(warehouse_bin):
             cmd = [warehouse_bin, "status"]
             status = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True).communicate()[0];
             c.warehouse = status.split("\n");
