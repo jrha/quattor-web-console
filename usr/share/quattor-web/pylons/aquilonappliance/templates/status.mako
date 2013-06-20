@@ -7,7 +7,15 @@ for i in c.broker:
     if i:
         columns = i.split(":", 1)
         if len(columns) > 1:
-            context.write("<dt>" + columns[0] + "</dt><dd>" + columns[1] + "</dd>\n")
+            key = columns[0]
+            value = columns[1]
+
+            if "is running" in value:
+                value = "<span class='label label-success'>%s</span>" % (value)
+            elif "is not running" in value:
+                value = "<span class='label label-important'>%s</span>" % (value)
+
+            context.write("<dt>%s</dt><dd>%s</dd>\n" % (key, value))
         else:
             context.write("<dt><i class='icon-info-sign'></i></dt><dd>" + columns[0] + "</dd>\n")
 context.write("</dl>\n")
