@@ -37,11 +37,4 @@ def make_map(config):
     map.connect('/warehouse/update', controller='warehouse', action='upload',
                 conditions=dict(method=['POST']))
 
-    map.connect('/reset', controller='appliance', action='reset_form',
-                conditions=dict(method=['GET']))
-    map.connect('/reset', controller='appliance', action='reset_apply',
-                conditions=dict(method=['POST']))
-    map.connect('/reset/manual', controller='appliance', action='reset_manual')
-    map.connect('/reset/bootstrap', controller='appliance', action='reset_bootstrap')
-
     return map
