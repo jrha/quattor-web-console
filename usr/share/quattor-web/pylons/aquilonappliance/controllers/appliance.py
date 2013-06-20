@@ -9,6 +9,7 @@ import time
 from os.path import *
 import os
 import errno
+import json
 
 #from aquilon.config import Config
 
@@ -156,6 +157,16 @@ class ApplianceController(BaseController):
         c.space["Profiles"] = space_used(cfg.get("broker", "profilesdir"), units)
 
         return render('/status.mako')
+
+    def sandboxes(self):
+        # If we can, check how the sandboxes are doing
+        if os.path.exists("/opt/aquilon/bin/sandbox_status_json"):
+            c.sandboxes = json.loads(subprocess.Popen(["/opt/aquilon/bin/sandbox_status_json"], stdout=subprocess.PIPE, close_fds=True).communicate()[0])
+
+        return render('/sandboxes.mako')
+
+    def about(self):
+        return render('/credits.mako')
 
 class Daemontool:
     def __init__(self, name=None):

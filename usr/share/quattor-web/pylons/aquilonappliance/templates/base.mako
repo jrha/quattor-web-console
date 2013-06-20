@@ -23,6 +23,7 @@
       <div class="nav-collapse collapse">
         <ul class="nav">
           <li><a href="/commands">Commands</a></li>
+          <li><a href="/sandboxes">Sandboxes</a></li>
         </ul>
       </div>
     </div>

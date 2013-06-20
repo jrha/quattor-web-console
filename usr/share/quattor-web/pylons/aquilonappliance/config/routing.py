@@ -29,6 +29,8 @@ def make_map(config):
     map.connect('/form/{cmd}', controller='forms', action='process_form',
                 conditions=dict(method=['POST']))
 
+    map.connect('/sandboxes', controller='appliance', action='sandboxes')
+
     map.connect('/appliance/log/{log}', controller='appliance', action='log')
 
     map.connect('/appliance/krb5settings', controller='appliance', action='krb5display')
