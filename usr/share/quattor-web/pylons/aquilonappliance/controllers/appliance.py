@@ -23,6 +23,13 @@ realm_re = re.compile('(\s*default_realm\s*=\s*)([a-zA-Z.]*)')
 
 # So many hacks, so little time.
 
+def tail(filename, count=24):
+    stdin, stdout = os.popen2("tail -n %s %s" % (count, filename))
+    stdin.close()
+    lines = stdout.readlines()
+    stdout.close()
+    return lines
+
 def space_used(dir, units):
     total = 0
     for item in os.listdir(dir):
@@ -74,7 +81,7 @@ class ApplianceController(BaseController):
     def log(self, log):
         if log == 'aqd':
             c.title = "Aquilon Broker"
-            logfile = "/var/quattor/logs/aqd.log"
+            logfile = "/var/log/aqd.log"
         elif log == 'pylons':
             c.title = "Web Interface"
             logfile = "/var/quattor/logs/pylons/current"
@@ -85,11 +92,7 @@ class ApplianceController(BaseController):
             c.log = log
             return render('/badlog.mako')
 
-        c.log = list()
-        fp = open(logfile)
-        for line in fp.read():
-            html = htmlify(line)
-            c.log.append(html)
+        c.log = tail(logfile)
         return render('/log.mako')
 
     def krb5display(self):
