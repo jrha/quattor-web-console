@@ -106,9 +106,6 @@ class ApplianceController(BaseController):
     def status(self):
         cfg = ConfigParser.ConfigParser()
         cfg.read(["/opt/aquilon/etc/aqd.conf.defaults", "/etc/aqd.conf"])
-        # XXX: this should use cfg, but the ConfigParser doesn't work right...
-        if not os.path.exists("/var/quattor/aquilondb/aquilon.db"):
-            return redirect("/reset")
 
         c.base = request.environ["HTTP_HOST"]
         c.base = c.base.replace(":" + request.environ["SERVER_PORT"], "")
