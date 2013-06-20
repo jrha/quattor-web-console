@@ -56,9 +56,10 @@ def htmlify(input):
 def aq(cmd):
     env = dict()
     env["KRB5CCNAME"] = "FILE:/var/spool/tickets/cdb"
-    env["PATH"] = "/opt/aquilon/bin:/usr/local/bin:/usr/bin:/bin"
+    env["PATH"] = "/usr/local/aquilon/pythonenv/bin:/opt/aquilon/bin:/usr/local/bin:/usr/bin:/bin"
     args = ["/opt/aquilon/bin/aq"]
     args.extend(cmd)
+    args.append("--noauth")
     # close all web file descriptors!
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, close_fds=True)
     (stdout, stderr) = p.communicate();
