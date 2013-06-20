@@ -125,9 +125,11 @@ class ApplianceController(BaseController):
             c.broker = ["The broker is not running"]
 
         # And the warehouse status
-        cmd = ["/opt/aquilon/bin/warehouse", "status"]
-        status = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True).communicate()[0];
-        c.warehouse = status.split("\n");
+        warehouse_bin = "/opt/aquilon/bin/warehouse"
+        if os.exists(warehouse_bin)
+            cmd = [warehouse_bin, "status"]
+            status = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True).communicate()[0];
+            c.warehouse = status.split("\n");
 
         units = 1024*1024 # MiB
         c.units_as_text = "MiB"
