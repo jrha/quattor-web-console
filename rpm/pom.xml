@@ -74,6 +74,7 @@
           </requires>
 
           <mappings>
+
             <mapping>
               <directory>/usr/share/quattor-web-console</directory>
               <filemode>644</filemode>
@@ -86,6 +87,33 @@
                 </source>
               </sources>
             </mapping>
+
+            <mapping>
+              <directory>/etc/init.d/</directory>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
+              <sources>
+                <source>
+                  <location>target/qwc/etc/init.d</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>/etc/quattor-web-console</directory>
+              <filemode>644</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
+              <sources>
+                <source>
+                  <location>target/qwc/etc/quattor-web-console</location>
+                </source>
+              </sources>
+            </mapping>
+
           </mappings>
         </configuration>
       </plugin>

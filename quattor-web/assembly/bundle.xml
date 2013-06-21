@@ -13,6 +13,14 @@
       <directory>src</directory>
       <outputDirectory>quattor-web-console</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>init-script</directory>
+      <outputDirectory>etc/init.d</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>config</directory>
+      <outputDirectory>etc/quattor-web-console</outputDirectory>
+    </fileSet>
   </fileSets>
 
 </assembly>
