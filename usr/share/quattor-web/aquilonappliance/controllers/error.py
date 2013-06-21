@@ -4,7 +4,9 @@ from paste.urlparser import PkgResourcesParser
 from pylons.middleware import error_document_template
 from webhelpers.html.builder import literal
 
-from aquilonappliance.lib.base import BaseController
+from aquilonappliance.lib.base import BaseController, render
+
+from pylons import tmpl_context as c
 
 class ErrorController(BaseController):
     """Generates error documents as and when they are required.
@@ -19,13 +21,8 @@ class ErrorController(BaseController):
     def document(self):
         """Render the error document"""
         request = self._py_object.request
-        resp = request.environ.get('pylons.original_response')
-        content = literal(resp.body) or cgi.escape(request.GET.get('message', ''))
-        page = error_document_template % \
-            dict(prefix=request.environ.get('SCRIPT_NAME', ''),
-                 code=cgi.escape(request.GET.get('code', str(resp.status_int))),
-                 message=content)
-        return page
+        c.resp = request.environ.get('pylons.original_response')
+        return render('/error.mako')
 
     def img(self, id):
         """Serve Pylons' stock images"""
