@@ -23,7 +23,7 @@ pidfile=/var/run/$prog.pid
 conffile="/etc/$prog/config.ini"
 logfile=/var/log/$prog.log
 lockfile=/var/lock/subsys/$prog
-paster=/usr/local/aquilon/pythonenv/bin/python2.6
+paster=/usr/local/aquilon/pythonenv/bin/paster
 
 start() {
     if [[ -x $paster ]]; then
@@ -32,7 +32,7 @@ start() {
             RETVAL=1
             failure
         else
-            $paster serve --logfile=$logfile --pidfile=$pidfile $conffile
+            $paster serve --log-file=$logfile --pid-file=$pidfile $conffile --daemon
             RETVAL=$?
             if [[ $RETVAL -eq 0 ]]; then
                 touch $lockfile
