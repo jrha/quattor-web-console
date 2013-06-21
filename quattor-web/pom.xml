@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>qwc</artifactId>
+  <packaging>pom</packaging>
+  <name>qwc</name>
+  <description>Quattor Web Console</description>
+
+  <parent>
+    <groupId>org.quattor.qwc</groupId>
+    <artifactId>qwc-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <build>
+
+    <plugins>    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        
+        <executions>
+          
+          <execution>
+            <id>bundle</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly/bundle.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          
+        </executions>
+        
+      </plugin>
+
+    </plugins>
+    
+  </build>
+
+</project>

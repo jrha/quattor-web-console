@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>qwc-rpm</artifactId>
+  <packaging>rpm</packaging>
+  <name>qwc-rpm</name>
+  <description>Quattor Web Console (RPM)</description>
+
+  <parent>
+    <groupId>org.quattor.qwc</groupId>
+    <artifactId>qwc-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.quattor.qwc</groupId>
+      <artifactId>qwc</artifactId>
+      <classifier>bundle</classifier>
+      <version>${project.version}</version>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-documentation</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.quattor.qwc</groupId>
+                  <artifactId>qwc</artifactId>
+                  <classifier>bundle</classifier>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}/qwc</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <release>${RELEASE}</release>
+          <summary>Quattor Web Console</summary>
+          <name>quattor-web-console</name>
+          <group>System</group>
+          <vendor>Quattor</vendor>
+          <packager>Quattor</packager>
+          <copyright>Apache</copyright>
+          <url>http://quattor.org/</url>
+          <needarch>noarch</needarch>
+          <description>
+            Packaging of Quattor Web Console
+          </description>
+
+          <requires>
+            <require>python</require>
+          </requires>
+
+          <mappings>
+            <mapping>
+              <directory>/usr/share/quattor-web-console</directory>
+              <filemode>644</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
+              <sources>
+                <source>
+                  <location>target/qwc/quattor-web-console</location>
+                </source>
+              </sources>
+            </mapping>
+          </mappings>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
