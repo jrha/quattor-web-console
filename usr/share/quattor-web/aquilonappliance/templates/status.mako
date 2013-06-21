@@ -1,6 +1,7 @@
 <%inherit file="/base.mako"/>
 
-<h2>Broker Status</h2>
+<div class='page-header'><h1>Status</h1></div>
+<h2>Broker</h2>
 <%
 context.write("<dl class='dl-horizontal'>\n")
 for i in c.broker:

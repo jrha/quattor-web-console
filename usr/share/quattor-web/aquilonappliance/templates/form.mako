@@ -1,5 +1,6 @@
 <%inherit file="/base.mako"/>
 
+<div class='page-header'><h1>Command Entry</h1></div>
 <h2>
 <%
 cmd = c.cmd.replace("_", " ")

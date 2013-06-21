@@ -1,5 +1,6 @@
 <%inherit file="/base.mako"/>
 
+<div class='page-header'><h1>Results</h1></div>
 <%
 is_stdout = ""
 if not c.stdout:
